@@ -11,10 +11,10 @@ Changes between 'DOC START' and 'DOC END' will not be lost on package update
 
 ## Usage
 
-*Add component to RectTransform
-*Setup
-**Variant.anchorPosition --- change size of rectTransofrm
-**Variant.padding --- change padding on connected LayoutGroup
+* Add component to RectTransform
+* Setup
+  * Variant.anchorPosition --- change size of rectTransofrm
+  * Variant.padding --- change padding on connected LayoutGroup
 
 <!-- DOC-END -->
 
