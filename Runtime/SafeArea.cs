@@ -15,7 +15,8 @@ namespace AS.SafeArea
         public bool top = true;
         public bool bottom = true;
         public FloatRectOffset padding, minBorder;
-
+        [Space]
+        public float fixIphoneBottomFactor = 0.41666f;
 
         RectTransform rectTransform;
         LayoutGroup targetLayoutGroup;
@@ -28,6 +29,9 @@ namespace AS.SafeArea
         bool lastLeft, lastRight, lastTop, lastBottom;
         Variant lastVariant;
 
+        bool isIphone = false;
+        float oldFixIphoneBottomFactor = 0;
+
         public enum Variant
         {
             disable,
@@ -39,11 +43,21 @@ namespace AS.SafeArea
         {
             rectTransform = GetComponent<RectTransform>();
             targetLayoutGroup = GetComponent<LayoutGroup>();
+            isIphone = SystemInfo.deviceModel.Contains("iPhone");
         }
 
         void Update()
         {
             Refresh();
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                isIphone = SystemInfo.deviceModel.Contains("iPhone");
+                Rect r = ModifySafeArea(safeArea);
+                ApplySafeArea(r);
+            }
+#endif
         }
 
         void Refresh()
@@ -70,6 +84,7 @@ namespace AS.SafeArea
                 screenOrientation = Screen.orientation;
 
                 safeArea = currentSafeArea;
+                oldFixIphoneBottomFactor = fixIphoneBottomFactor;
 
                 Rect r = ModifySafeArea(safeArea);
                 ApplySafeArea(r);
@@ -82,12 +97,32 @@ namespace AS.SafeArea
             if (lastBottom != bottom || lastLeft != left || lastRight != right || lastTop != top) return true;
             if (!lastPadding.Equals(padding) || !lastMinBorder.Equals(minBorder)) return true;
             if (lastVariant != variant) return true;
+            if (oldFixIphoneBottomFactor != fixIphoneBottomFactor) return true;
 
             return false;
         }
 
         Rect ModifySafeArea(Rect r)
         {
+            if (fixIphoneBottomFactor != 0 && isIphone)
+            {
+                switch (screenOrientation)
+                {
+                    case ScreenOrientation.Portrait:
+                        r.yMin = r.yMin * fixIphoneBottomFactor;
+                        break;
+                    case ScreenOrientation.PortraitUpsideDown:
+                        r.yMax = Screen.height + (r.yMax - Screen.height) * fixIphoneBottomFactor;
+                        break;
+                    case ScreenOrientation.LandscapeRight:
+                        r.xMin = r.xMin * fixIphoneBottomFactor;
+                        break;
+                    case ScreenOrientation.LandscapeLeft:
+                        r.xMax = Screen.width + (r.xMax - Screen.width) * fixIphoneBottomFactor;
+                        break;
+                }
+
+            }
 
             Vector2 size = GetComponentInParent<Canvas>().GetComponent<RectTransform>().sizeDelta;
 
@@ -99,6 +134,7 @@ namespace AS.SafeArea
             r.yMin = Mathf.Max(r.yMin, minBorder.bottom / yScale) + padding.bottom / yScale;
             r.xMax = Mathf.Min(r.xMax, Screen.width - minBorder.right / yScale) - padding.right / yScale;
             r.xMin = Mathf.Max(r.xMin, minBorder.left / yScale) + padding.left / yScale;
+
 
             return r;
         }
