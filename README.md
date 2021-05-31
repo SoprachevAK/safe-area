@@ -10,7 +10,7 @@ Changes between 'DOC START' and 'DOC END' will not be lost on package update
 -->
 
 ## Usage
-
+* Add "com.soprachevak.safe-area.Runtime" to Custom Assemblies into Project Settings -> Device Simulator
 * Add component to RectTransform
 * Setup
   * Variant.anchorPosition --- change size of rectTransofrm
