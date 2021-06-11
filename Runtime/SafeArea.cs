@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,10 @@ namespace AS.SafeArea
         public FloatRectOffset padding, minBorder;
         [Space]
         public float fixIphoneBottomFactor = 0.41666f;
+
+        public delegate void OnChange(Rect rect);
+        public event OnChange onSafeAreaChange;
+
 
         RectTransform rectTransform;
         LayoutGroup targetLayoutGroup;
@@ -88,6 +93,8 @@ namespace AS.SafeArea
 
                 Rect r = ModifySafeArea(safeArea);
                 ApplySafeArea(r);
+
+                onSafeAreaChange?.Invoke(r);
 
             }
         }
