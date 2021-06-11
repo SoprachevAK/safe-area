@@ -111,7 +111,7 @@ namespace AS.SafeArea
 
         Rect ModifySafeArea(Rect r)
         {
-            if (fixIphoneBottomFactor != 0 && isIphone)
+            if (fixIphoneBottomFactor != 1 && isIphone)
             {
                 switch (screenOrientation)
                 {
