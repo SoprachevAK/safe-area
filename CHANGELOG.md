@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.3] - 2021-06-20
+### Added
+-Add Menu item
+
 ## [1.0.2] - 2021-05-31
 ### Added
 -Add change event

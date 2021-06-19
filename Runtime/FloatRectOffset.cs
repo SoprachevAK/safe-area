@@ -6,10 +6,10 @@ namespace AS.SafeArea
     public class FloatRectOffset
     {
 
-        public float left;
-        public float right;
-        public float top;
-        public float bottom;
+        public float left = 0f;
+        public float right = 0f;
+        public float top = 0f;
+        public float bottom = 0f;
 
         public float horizontal
         {
@@ -49,6 +49,11 @@ namespace AS.SafeArea
                    right == offset.right &&
                    top == offset.top &&
                    bottom == offset.bottom;
+        }
+
+        public override int GetHashCode()
+        {
+            return System.Tuple.Create(left, right, top, bottom).GetHashCode();
         }
     }
 }

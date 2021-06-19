@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 namespace AS.SafeArea
 {
@@ -43,6 +47,37 @@ namespace AS.SafeArea
             anchorPosition,
             padding
         }
+
+#if UNITY_EDITOR
+        [MenuItem("GameObject/UI/Safe area", false, 5000)]
+        static public void CreateSafeArea(MenuCommand menuCommand)
+        {
+            GameObject parent = menuCommand.context as GameObject;
+            if (parent)
+            {
+                GameObject go = new GameObject("SafeArea");
+                Undo.RegisterCreatedObjectUndo(go, "Create safe area");
+                Undo.SetTransformParent(go.transform, parent.transform, "Parent safe area");
+                GameObjectUtility.SetParentAndAlign(go, parent);
+
+                RectTransform rectTransform = go.AddComponent<RectTransform>();
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.sizeDelta = Vector2.zero;
+                rectTransform.anchoredPosition = Vector2.zero;
+
+                go.AddComponent<SafeArea>();
+
+                Selection.activeGameObject = go;
+            }
+        }
+
+        [MenuItem("GameObject/UI/Safe area", true, 5000)]
+        static public bool CreateSafeAreaValidate()
+        {
+            return Selection.activeGameObject?.GetComponentInParent<Canvas>() != null;
+        }
+#endif
 
         private void Awake()
         {

@@ -1,6 +1,6 @@
 {
   "name": "com.soprachevak.safe-area",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "displayName": "Safe area",
   "description": "Safe area component for anchored and layout padding",
   "dependencies": {},
