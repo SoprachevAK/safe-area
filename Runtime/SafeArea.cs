@@ -79,11 +79,16 @@ namespace AS.SafeArea
         }
 #endif
 
-        private void Awake()
+        void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
             targetLayoutGroup = GetComponent<LayoutGroup>();
             isIphone = SystemInfo.deviceModel.Contains("iPhone");
+        }
+
+        void OnEnable()
+        {
+            Refresh();
         }
 
         void Update()
