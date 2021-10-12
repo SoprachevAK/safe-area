@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +7,6 @@ using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-
 
 namespace AS.SafeArea
 {
@@ -20,12 +19,13 @@ namespace AS.SafeArea
         public bool top = true;
         public bool bottom = true;
         public FloatRectOffset padding, minBorder;
+
         [Space]
         public float fixIphoneBottomFactor = 0.41666f;
 
         public delegate void OnChange(Rect rect);
-        public event OnChange onSafeAreaChange;
 
+        public event OnChange onSafeAreaChange;
 
         RectTransform rectTransform;
         LayoutGroup targetLayoutGroup;
@@ -53,6 +53,7 @@ namespace AS.SafeArea
         static public void CreateSafeArea(MenuCommand menuCommand)
         {
             GameObject parent = menuCommand.context as GameObject;
+
             if (parent)
             {
                 GameObject go = new GameObject("SafeArea");
@@ -135,7 +136,6 @@ namespace AS.SafeArea
                 ApplySafeArea(r);
 
                 onSafeAreaChange?.Invoke(r);
-
             }
         }
 
@@ -157,21 +157,25 @@ namespace AS.SafeArea
                 {
                     case ScreenOrientation.Portrait:
                         r.yMin = r.yMin * fixIphoneBottomFactor;
+
                         break;
                     case ScreenOrientation.PortraitUpsideDown:
                         r.yMax = Screen.height + (r.yMax - Screen.height) * fixIphoneBottomFactor;
+
                         break;
                     case ScreenOrientation.LandscapeRight:
                         r.xMin = r.xMin * fixIphoneBottomFactor;
+
                         break;
                     case ScreenOrientation.LandscapeLeft:
                         r.xMax = Screen.width + (r.xMax - Screen.width) * fixIphoneBottomFactor;
+
                         break;
                 }
-
             }
 
-            Vector2 size = GetComponentInParent<Canvas>().GetComponent<RectTransform>().sizeDelta;
+            if (!(GetComponentInParent<Canvas>() is {transform: RectTransform rect})) return r;
+            var size = rect.sizeDelta;
 
 
             float xScale = size.x / (1.0f * Screen.width);
@@ -188,17 +192,13 @@ namespace AS.SafeArea
 
         void ApplySafeArea(Rect r)
         {
-            if (!top)
-                r.yMax = Screen.height;
+            if (!top) r.yMax = Screen.height;
 
-            if (!bottom)
-                r.yMin = 0;
+            if (!bottom) r.yMin = 0;
 
-            if (!right)
-                r.xMax = Screen.width;
+            if (!right) r.xMax = Screen.width;
 
-            if (!left)
-                r.xMin = 0;
+            if (!left) r.xMin = 0;
 
             if (variant == Variant.anchorPosition)
             {
@@ -229,9 +229,11 @@ namespace AS.SafeArea
         void SetRectPadding(Rect r)
         {
             if (!targetLayoutGroup) targetLayoutGroup = GetComponent<LayoutGroup>();
+
             if (!targetLayoutGroup)
             {
                 this.enabled = false;
+
                 throw new System.Exception("LayoutGroup not found");
             }
 
@@ -248,7 +250,6 @@ namespace AS.SafeArea
             targetLayoutGroup.padding.right = Mathf.RoundToInt((Screen.width - r.xMax) * xScale);
 
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
-
         }
     }
 }
